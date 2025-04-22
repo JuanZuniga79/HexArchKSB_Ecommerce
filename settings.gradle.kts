@@ -1,1 +1,1 @@
-rootProject.name = "HexArchKSB_BooksEcommerce"
+rootProject.name = "HexArchKSB_Ecommerce"

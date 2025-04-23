@@ -14,9 +14,10 @@ class JwtSupport {
     private val parser = Jwts.parser().verifyWith(key).build();
 
 
-    fun generate(username: String): BearerToken {
+    fun generate(username: String, role: String): BearerToken {
         val builder = Jwts.builder()
             .subject(username)
+            .claim("role", role)
             .issuedAt(Date.from(Instant.now()))
             .expiration(Date.from(Instant.now().plus(1, ChronoUnit.HOURS)))
             .signWith(key)

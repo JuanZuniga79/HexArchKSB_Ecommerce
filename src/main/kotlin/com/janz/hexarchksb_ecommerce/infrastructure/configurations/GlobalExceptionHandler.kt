@@ -2,10 +2,13 @@ package com.janz.hexarchksb_ecommerce.infrastructure.configurations
 
 import com.janz.hexarchksb_ecommerce.infrastructure.models.ApiResponse
 import com.janz.hexarchksb_ecommerce.infrastructure.utils.ResponseUtil
+import io.jsonwebtoken.ExpiredJwtException
 import org.slf4j.LoggerFactory
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import org.springframework.http.converter.HttpMessageNotReadableException
+import org.springframework.security.authentication.AuthenticationCredentialsNotFoundException
+import org.springframework.security.authorization.AuthorizationDeniedException
 import org.springframework.web.bind.MethodArgumentNotValidException
 import org.springframework.web.bind.annotation.ExceptionHandler
 import org.springframework.web.bind.annotation.RestControllerAdvice
@@ -87,4 +90,30 @@ class GlobalExceptionHandler {
         logger.error("Unhandled exception", ex)
         return ResponseUtil.error("Unexpected error: ${ex.message}", HttpStatus.INTERNAL_SERVER_ERROR)
     }
+
+    @ExceptionHandler(SecurityException::class)
+    fun handleSecurityException(ex: SecurityException): ResponseEntity<ApiResponse<Nothing>> {
+        return ResponseUtil.error("Authentication error: ${ex.message}", HttpStatus.UNAUTHORIZED)
+    }
+
+    @ExceptionHandler(AuthenticationCredentialsNotFoundException::class)
+    fun handleAuthenticationCredentialsNotFoundException(ex: AuthenticationCredentialsNotFoundException): ResponseEntity<ApiResponse<Nothing>> {
+        return ResponseUtil.error("Authentication error: ${ex.message}", HttpStatus.UNAUTHORIZED)
+    }
+
+    @ExceptionHandler(AuthorizationDeniedException::class)
+    fun handleAuthorizationDeniedException(ex: AuthorizationDeniedException): ResponseEntity<ApiResponse<Nothing>> {
+        return ResponseUtil.error("You don't have permissions to access", HttpStatus.FORBIDDEN)
+    }
+
+    @ExceptionHandler(ExpiredJwtException::class)
+    fun handleExpiredJwtException(ex: ExpiredJwtException): ResponseEntity<ApiResponse<Nothing>> {
+        return ResponseUtil.error("Token expired: ${ex.message}", HttpStatus.UNAUTHORIZED)
+    }
+
+    @ExceptionHandler(AccessDeniedException::class)
+    fun handleAccessDeniedException(ex: AccessDeniedException): ResponseEntity<ApiResponse<Nothing>> {
+        return ResponseUtil.error("Access denied: ${ex.message}", HttpStatus.FORBIDDEN)
+    }
+
 }

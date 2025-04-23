@@ -1,6 +1,7 @@
-package com.janz.hexarchksb_ecommerce.infrastructure.adapters.driving.free
+package com.janz.hexarchksb_ecommerce.infrastructure.adapters.driving.controllers.free
 
 import com.janz.hexarchksb_ecommerce.application.ports.driving.services.UserService
+import com.janz.hexarchksb_ecommerce.infrastructure.configurations.JwtSupport
 import com.janz.hexarchksb_ecommerce.infrastructure.models.ApiResponse
 import com.janz.hexarchksb_ecommerce.infrastructure.models.dto.CreateUserDto
 import com.janz.hexarchksb_ecommerce.infrastructure.models.dto.LoginUserDto
@@ -24,7 +25,7 @@ data class EmailDTO(
 
 @RestController
 @RequestMapping("/api/public")
-class PublicUserController(private val service: UserService) {
+class PublicUserController(private val service: UserService, private val jwt: JwtSupport) {
 
     @PostMapping("/validate-email")
     suspend fun validateEmail(@Valid @RequestBody email: EmailDTO): ResponseEntity<ApiResponse<Nothing>> {
@@ -40,7 +41,13 @@ class PublicUserController(private val service: UserService) {
 
     @PostMapping("/login")
     suspend fun login(@Valid @RequestBody user: LoginUserDto): ResponseEntity<ApiResponse<ResponseLoginDto>> {
-        return  ResponseUtil.success<ResponseLoginDto>(message = "User login successfully");
+        val user = service.login(user);
+        return  ResponseUtil.success<ResponseLoginDto>(
+            message = "User login successfully", status = HttpStatus.OK, data = ResponseLoginDto(
+                user = user,
+                token = jwt.generate(user.username, user.role.name).value
+            )
+        );
     }
 
 }

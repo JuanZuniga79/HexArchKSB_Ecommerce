@@ -38,8 +38,9 @@ class JwtAuthenticationManager (
         val username = jwtSupport.getUserName(token)
         val user = userRepository.findByUsername(username)
             ?: throw ResponseStatusException(HttpStatus.NOT_FOUND, "User not found")
-        if(jwtSupport.isValid(token)) {
-            val authorities = listOf(SimpleGrantedAuthority("ROLE_USER"))
+        if (jwtSupport.isValid(token)) {
+            val role = user.role.name.uppercase();
+            val authorities = mapRoleToAuthorities(role)
             return UsernamePasswordAuthenticationToken(
                 user.username,
                 null,
@@ -47,6 +48,18 @@ class JwtAuthenticationManager (
             )
         }
         throw IllegalArgumentException("Invalid token")
+    }
+
+    private fun mapRoleToAuthorities(role: String): List<SimpleGrantedAuthority> {
+        return when (role) {
+            "ADMIN" -> listOf(
+                SimpleGrantedAuthority("ROLE_ADMIN"),
+                SimpleGrantedAuthority("ROLE_MODERATOR"),
+                SimpleGrantedAuthority("ROLE_CLIENT")
+            )
+            "CLIENT" -> listOf(SimpleGrantedAuthority("ROLE_CLIENT"))
+            else -> emptyList()
+        }
     }
 
 }

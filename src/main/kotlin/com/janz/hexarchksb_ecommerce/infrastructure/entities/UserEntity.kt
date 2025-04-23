@@ -29,7 +29,7 @@ data class UserEntity(
     @Column(length = 16, unique = true)
     var document: String,
     var active: Boolean =  true,
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.EAGER)
     var role: RoleEntity,
     val createdAt: LocalDateTime = LocalDateTime.now(),
     var updatedAt: LocalDateTime = LocalDateTime.now(),

@@ -3,6 +3,7 @@ package com.janz.hexarchksb_ecommerce.application.services
 import com.janz.hexarchksb_ecommerce.application.ports.driven.repositories.RoleRepository
 import com.janz.hexarchksb_ecommerce.application.ports.driving.services.RoleService
 import com.janz.hexarchksb_ecommerce.infrastructure.entities.RoleEntity
+import org.springframework.data.repository.findByIdOrNull
 import org.springframework.stereotype.Service
 
 @Service
@@ -15,5 +16,9 @@ class RoleServiceImpl (private val repository: RoleRepository) : RoleService{
            );
         }
         return role;
+    }
+
+    override suspend fun getRoleById(id: Int): RoleEntity {
+        return repository.findByIdOrNull(id) ?: throw IllegalArgumentException("Role with id $id not found");
     }
 }

@@ -4,4 +4,5 @@ import com.janz.hexarchksb_ecommerce.infrastructure.entities.RoleEntity
 
 interface RoleService {
     suspend fun getClientRole() : RoleEntity
+    suspend fun getRoleById(id: Int): RoleEntity
 }

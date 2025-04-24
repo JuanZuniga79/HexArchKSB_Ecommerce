@@ -8,7 +8,7 @@ import org.springframework.web.bind.annotation.RestController
 @SpringBootApplication
 @RestController
 class HexArchKsbBooksEcommerceApplication{
-    @GetMapping("/")
+    @GetMapping("/api/")
     suspend fun hello(): String {
         return "hello"
     }
